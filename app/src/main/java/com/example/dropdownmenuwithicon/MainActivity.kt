@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dropdownmenuwithicon.ui.theme.DropdownMenuWithIconTheme
@@ -41,46 +42,53 @@ fun DropdownMenuWithIcon() {
     var expanded by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableStateOf(0) }
 
+    // Anchor用のBoxを導入
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        Box(
             modifier = Modifier
-                .clickable { expanded = !expanded }
-                .padding(8.dp)
+                .wrapContentSize(Alignment.Center)
         ) {
-            Text(
-                text = items[selectedIndex],
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Icon(
-                imageVector = if (expanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
-                contentDescription = "Dropdown Icon",
-                tint = Color.Black,
-                modifier = Modifier.size(24.dp)
-            )
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-//            modifier = Modifier.fillMaxWidth()
-        ) {
-            items.forEachIndexed { index, item ->
-                DropdownMenuItem(
-                    text = { Text(text = item) },
-                    onClick = {
-                        selectedIndex = index
-                        expanded = false
-                    }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .clickable { expanded = !expanded }
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = items[selectedIndex],
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
                 )
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(
+                    imageVector = if (expanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+                    contentDescription = "Dropdown Icon",
+                    tint = Color.Black,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+
+            // DropdownMenu のオフセット調整
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                offset = DpOffset(0.dp, 8.dp) // Y方向に8dp下げる
+            ) {
+                items.forEachIndexed { index, item ->
+                    DropdownMenuItem(
+                        text = { Text(text = item) },
+                        onClick = {
+                            selectedIndex = index
+                            expanded = false
+                        }
+                    )
+                }
             }
         }
     }
